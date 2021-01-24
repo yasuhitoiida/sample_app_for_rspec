@@ -18,7 +18,7 @@ RSpec.describe Task, type: :model do
       expect(task.errors[:status]).to include("can't be blank")
     end
 
-    context 'when making a cake task already exists' do
+    context 'when title_1 already exists' do
       before do
         FactoryBot.create(:task)
       end
