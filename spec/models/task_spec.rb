@@ -9,7 +9,7 @@ RSpec.describe Task, type: :model do
     end
 
     it 'is invalid without title' do
-      task_without_title = FactoryBot.build(:task, title: nil)
+      task_without_title = FactoryBot.build(:task, title: '')
       expect(task_without_title).to be_invalid
       expect(task_without_title.errors[:title]).to include("can't be blank")
     end
@@ -20,22 +20,18 @@ RSpec.describe Task, type: :model do
       expect(task_without_status.errors[:status]).to include("can't be blank")
     end
 
-    context 'when title_1 already exists' do
-      before do
-        FactoryBot.create(:task)
-      end
+    it 'is invalid with a duplicate title' do
+      task = FactoryBot.create(:task)
+      task_with_duplicated_title = FactoryBot.build(:task, title: task.title)
+      expect(task_with_duplicated_title).to be_invalid
+      expect(task_with_duplicated_title.errors[:title]).to include("has already been taken")
+    end
 
-      it 'is invalid with a duplicate title' do
-        task_with_duplicated_title = FactoryBot.build(:task)
-        expect(task_with_duplicated_title).to be_invalid
-        expect(task_with_duplicated_title.errors[:title]).to include("has already been taken")
-      end
-
-      it 'is valid with another title' do
-        task_with_another_title = FactoryBot.build(:task, title: 'another_title')
-        expect(task_with_another_title).to be_valid
-        expect(task_with_another_title.errors).to be_empty
-      end
+    it 'is valid with another title' do
+      task = FactoryBot.create(:task)
+      task_with_another_title = FactoryBot.build(:task, title: 'another_title')
+      expect(task_with_another_title).to be_valid
+      expect(task_with_another_title.errors).to be_empty
     end
   end
 end
